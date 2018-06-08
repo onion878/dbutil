@@ -44,7 +44,7 @@ public abstract class BaseEntity {
 	public int save() throws Exception {
 		String tableName = getTableName();
 		Field[] flds = getClass().getDeclaredFields();
-		String sql1 = "insert into " + this.$sql_divid_start + tableName.toUpperCase() + this.$sql_divid_end + "(";
+		String sql1 = "insert into " + this.$sql_divid_start + tableName + this.$sql_divid_end + "(";
 		String sql2 = " values(";
 		List params = new ArrayList();
 		for (int i = 0; i < flds.length; i++) {
@@ -67,7 +67,7 @@ public abstract class BaseEntity {
 						Date d = (Date) value;
 						value = DateUtil.toStamp(d);
 					}
-					sql1 = sql1 + this.$sql_divid_start + fldName.toUpperCase() + this.$sql_divid_end + ",";
+					sql1 = sql1 + this.$sql_divid_start + fldName + this.$sql_divid_end + ",";
 					sql2 = sql2 + "?,";
 					params.add(value);
 					Logger.log(0, "BaseEntity.save:(key)" + fldName + "(value):" + value);
@@ -109,11 +109,11 @@ public abstract class BaseEntity {
 						Date d = (Date) value;
 						value = DateUtil.toStamp(d);
 					}
-					sql = sql + this.$sql_divid_start + colName.toUpperCase() + this.$sql_divid_end + "=?,";
+					sql = sql + this.$sql_divid_start + colName + this.$sql_divid_end + "=?,";
 					params.add(value);
 					Logger.log(0, "BaseEntity.update:(key)" + colName + "(value):" + value);
 				} else {
-					sql = sql + this.$sql_divid_start + colName.toUpperCase() + this.$sql_divid_end + "=null,";
+					sql = sql + this.$sql_divid_start + colName + this.$sql_divid_end + "=null,";
 				}
 			}
 		}
@@ -121,9 +121,9 @@ public abstract class BaseEntity {
 		Object keyValue = keyField.get(this);
 		params.add(keyValue);
 		Logger.log(0, "BaseEntity.update:(key):" + keyName + "(value):" + keyValue);
-		sql = "update " + this.$sql_divid_start + tableName.toUpperCase() + this.$sql_divid_end
+		sql = "update " + this.$sql_divid_start + tableName + this.$sql_divid_end
 				+ sql.substring(0, sql.length() - 1);
-		sql = sql + " where " + this.$sql_divid_start + keyName.toUpperCase() + this.$sql_divid_end + "=?";
+		sql = sql + " where " + this.$sql_divid_start + keyName + this.$sql_divid_end + "=?";
 		int r = 0;
 		if (params.size() == 0) {
 			Logger.error("参数为空保存失败!");
@@ -142,7 +142,7 @@ public abstract class BaseEntity {
 	public List query() throws Exception {
 		String tableName = getTableName();
 		Field[] flds = getClass().getDeclaredFields();
-		String sql1 = "select * from " + this.$sql_divid_start + tableName.toUpperCase() + this.$sql_divid_end
+		String sql1 = "select * from " + this.$sql_divid_start + tableName + this.$sql_divid_end
 				+ " where ";
 		List<Object> params = new ArrayList();
 		for (int i = 0; i < flds.length; i++) {
@@ -152,7 +152,7 @@ public abstract class BaseEntity {
 				fldName = key.value();
 				flds[i].setAccessible(true);
 				Object value = flds[i].get(this);
-				sql1 = sql1 + " " + this.$sql_divid_start + fldName.toUpperCase() + this.$sql_divid_end
+				sql1 = sql1 + " " + this.$sql_divid_start + fldName + this.$sql_divid_end
 						+ " like '%'+?+'%' and";
 				params.add(value);
 				Logger.log(0, "BaseEntity.query:(key):" + fldName + "(value):" + value);
@@ -177,8 +177,8 @@ public abstract class BaseEntity {
 				break;
 			}
 		}
-		String sql = "delete from " + this.$sql_divid_start + tableName.toUpperCase() + this.$sql_divid_end + " where "
-				+ this.$sql_divid_start + keyName.toUpperCase() + this.$sql_divid_end + "=?";
+		String sql = "delete from " + this.$sql_divid_start + tableName + this.$sql_divid_end + " where "
+				+ this.$sql_divid_start + keyName + this.$sql_divid_end + "=?";
 		keyField.setAccessible(true);
 		Object param = keyField.get(this);
 		Logger.log(0, "BaseEntity.delete:(key):" + keyName + "(value):" + param);
@@ -200,9 +200,9 @@ public abstract class BaseEntity {
 			}
 		}
 
-		String sql = "select count(" + this.$sql_divid_start + keyName.toUpperCase() + this.$sql_divid_end
-				+ ") as size from " + this.$sql_divid_start + tableName.toUpperCase() + this.$sql_divid_end + " where "
-				+ this.$sql_divid_start + keyName.toUpperCase() + this.$sql_divid_end + "=?";
+		String sql = "select count(" + this.$sql_divid_start + keyName + this.$sql_divid_end
+				+ ") as size from " + this.$sql_divid_start + tableName + this.$sql_divid_end + " where "
+				+ this.$sql_divid_start + keyName + this.$sql_divid_end + "=?";
 		keyField.setAccessible(true);
 		Object param = keyField.get(this);
 		Object size = dbutil.uniqueValue(sql, new Object[] { param });

@@ -370,7 +370,7 @@ public class DBUtil {
         }
 
         Logger.log(0, "DBUtil.getById.keyName:" + var7);
-        String var8 = "select * from " + $db_divid_start + tableName.toUpperCase() + $db_divid_end + " where " + $db_divid_start + var7.toUpperCase() + $db_divid_end + "=?";
+        String var8 = "select * from " + $db_divid_start + tableName + $db_divid_end + " where " + $db_divid_start + var7 + $db_divid_end + "=?";
         Logger.log(3, "DBUtil.getById.sql:" + var8);
         Object var9 = this.uniqueBean(beanClz, var8, new Object[]{key});
         return var9;
