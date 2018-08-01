@@ -39,7 +39,7 @@ public class DBUtil {
                 $db_divid_end = 93;
             }
         } catch (Exception var1) {
-            ;
+
         }
 
     }
