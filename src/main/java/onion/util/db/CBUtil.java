@@ -63,7 +63,12 @@ public class CBUtil {
         }
     }
 
-    public CBUtil() {
+    private CBUtil() {
+    }
+
+    private static final CBUtil instance = new CBUtil();
+    public static CBUtil getInstance() {
+        return instance;
     }
 
     private PreparedStatement getStatement(String sql, Connection con,

@@ -108,12 +108,7 @@ public class DBUtil {
         Connection conn = (Connection)ThreadConnection.getThreadCon().get();
         if(conn == null) {
             try {
-                if(DButilsDataSource.getDatasource() == null) {
-                    conn = c3p0pool.getConnection();
-                } else {
-                    conn = DButilsDataSource.getDatasource().getConnection();
-                }
-
+                conn = DButilsDataSource.getDatasource().getConnection();
                 conn.setAutoCommit(false);
                 ThreadConnection.getThreadCon().set(conn);
                 Logger.log(0, "获取连接DBUtil.getCon()=" + conn.getClass().getInterfaces()[0].getName());
@@ -178,8 +173,8 @@ public class DBUtil {
         ThreadConnection.getThreadCon().remove();
     }
 
-    public static void shutDown() throws Exception {
-        c3p0pool.getInstance().stop();
+    public static void shutDown() {
+        DButilsDataSource.getDatasource().close();
     }
 
     public int update(String sql, Object... args) throws Exception {

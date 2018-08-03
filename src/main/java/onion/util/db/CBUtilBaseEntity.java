@@ -15,7 +15,7 @@ public abstract class CBUtilBaseEntity {
 	public static final int PERSIST_INVALID = 2;
 	private char $sql_divid_start = '\000';
 	private char $sql_divid_end = '\000';
-	private CBUtil cbUtil = new CBUtil();
+	private CBUtil cbUtil = CBUtil.getInstance();
 
 	@SuppressWarnings("unchecked")
 	private String getTableName() {
