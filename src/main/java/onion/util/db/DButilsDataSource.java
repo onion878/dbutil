@@ -37,7 +37,6 @@ public class DButilsDataSource {
         hikariConfig.setConnectionTimeout( 300L );
         hikariConfig.setValidationTimeout( 300L );
         hikariConfig.setInitializationFailTimeout( 1L );
-        hikariConfig.setAutoCommit( true );
         if (type == 1 ) {
             if (PropertyReader.get( "key" ) == null) {
                 DRIVER = PropertyReader.get( "driver" ).toString();

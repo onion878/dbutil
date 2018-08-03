@@ -22,6 +22,7 @@ public class CBUtil {
     private static char $db_divid_start = '\000';
     private static char $db_divid_end = '\000';
     private static String db;
+    private static boolean autoCommit = true;
 
     @SuppressWarnings("static-access")
     public void setConPro(String DRIVER, String URL, String USER,
@@ -44,6 +45,11 @@ public class CBUtil {
 
     static {
         try {
+            if (PropertyReader.get( "autoCommit" ) == null) {
+                autoCommit = true;
+            } else {
+                autoCommit = Boolean.valueOf( PropertyReader.get( "autoCommit" ) );
+            }
             db = PropertyReader.get( "db" );
             if (db.equalsIgnoreCase( "oracle" )) {
                 $db_divid_end = 34;
@@ -67,8 +73,13 @@ public class CBUtil {
     }
 
     private static final CBUtil instance = new CBUtil();
+
     public static CBUtil getInstance() {
         return instance;
+    }
+
+    public void setAutoCommit(boolean bool) throws Exception {
+        getCon().setAutoCommit( bool );
     }
 
     private PreparedStatement getStatement(String sql, Connection con,
@@ -128,7 +139,7 @@ public class CBUtil {
         if (conn == null) {
             try {
                 conn = pool.getConnection();
-                conn.setAutoCommit( false );
+                conn.setAutoCommit( autoCommit );
                 ThreadConnection.getThreadCon().set( conn );
                 Logger.log( 0, "从连接池获取连接CBUtil.getCon()="
                         + conn.getClass().getInterfaces()[0].getName() );
