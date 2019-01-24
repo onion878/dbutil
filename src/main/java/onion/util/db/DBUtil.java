@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import onion.util.db.annontations.Key;
 import onion.util.db.annontations.Table;
 
 public class DBUtil {
-    private static char $db_divid_start = 0;
-    private static char $db_divid_end = 0;
+    private static char $db_divid_start = 96;
+    private static char $db_divid_end = 96;
     private static String db;
     private static boolean autoCommit = true;
 
@@ -26,19 +25,6 @@ public class DBUtil {
                 autoCommit = true;
             } else {
                 autoCommit = Boolean.valueOf(PropertyReader.get("autoCommit"));
-            }
-            if (db.equalsIgnoreCase("oracle")) {
-                $db_divid_end = 34;
-                $db_divid_start = 34;
-            } else if (db.equalsIgnoreCase("mysql")) {
-                $db_divid_end = 96;
-                $db_divid_start = 96;
-            } else if (db.equalsIgnoreCase("sqlserver")) {
-                $db_divid_start = 91;
-                $db_divid_end = 93;
-            } else {
-                $db_divid_start = 91;
-                $db_divid_end = 93;
             }
         } catch (Exception var1) {
 
@@ -523,61 +509,6 @@ public class DBUtil {
         return list;
     }
 
-    public String queryAll(String[] key, String[] value, String tableName, String order, int page, int size) throws Exception {
-        Map<String, Object> sql = Help.SqlSting(key, value, tableName, order, page, size);
-        Logger.log(3, "DBUtil.queryAll.rowsql:" + sql.get("sql"));
-        Logger.log(3, "DBUtil.queryAll.sizesql:" + sql.get("size"));
-        List<Object> obj = (List) sql.get("value");
-        Object[] object = new Object[obj.size()];
-
-        for (int i = 0; i < object.length; ++i) {
-            object[i] = obj.get(i);
-        }
-
-        String jsons = this.queryJSON(sql.get("sql").toString(), object);
-        Object onj = this.uniqueValue(sql.get("size").toString(), object);
-        String list = "{\"total\":" + jsons + ",\"rows\":" + onj + "}";
-        Logger.log(3, "DBUtil.queryAll.size:" + list);
-        return list;
-    }
-
-    public Map<String, Object> queryAllMap(String[] key, String[] value, String tableName, String order, int page, int size) throws Exception {
-        Map<String, Object> sql = Help.SqlSting(key, value, tableName, order, page, size);
-        Logger.log(3, "DBUtil.queryAllMap.rowssql:" + sql.get("sql"));
-        Logger.log(3, "DBUtil.queryAllMap.sizesql:" + sql.get("size"));
-        List<Object> obj = (List) sql.get("value");
-        Object[] object = new Object[obj.size()];
-
-        for (int i = 0; i < object.length; ++i) {
-            object[i] = obj.get(i);
-        }
-
-        String jsons = this.queryJSON(sql.get("sql").toString(), object);
-        Object onj = this.uniqueValue(sql.get("size").toString(), object);
-        Map<String, Object> map = new HashMap();
-        map.put("rows", jsons);
-        map.put("total", onj);
-        Logger.log(3, "DBUtil.queryAll:" + map.toString());
-        return map;
-    }
-
-    public Map<String, Object> queryListMap(Class<?> beanClz, String[] key, String[] value, String tableName, String order, int page, int size) throws Exception {
-        Map<String, Object> sql = Help.SqlSting(key, value, tableName, order, page, size);
-        Logger.log(3, "DBUtil.queryListMap.rowssql:" + sql.get("sql"));
-        Logger.log(3, "DBUtil.queryListMap.sizesql:" + sql.get("size"));
-        List<Object> obj = (List) sql.get("value");
-        Map<String, Object> map = new HashMap();
-        Object onj = this.uniqueValue(sql.get("size").toString(), obj);
-        map.put("rows", this.queryJSON(beanClz, sql.get("sql").toString(), obj));
-        map.put("total", onj);
-        Logger.log(3, "DBUtil.queryListMap:" + map.toString());
-        return map;
-    }
-
-    public String querydatagrid(Class<?> beanClz, String[] key, String[] value, String tableName, String order, int page, int size) throws Exception {
-        Map<String, Object> map = this.queryListMap(beanClz, key, value, tableName, order, page, size);
-        return datagrid(map);
-    }
 
     public String queryJSON(Class<?> beanClz, String sql, List<Object> args) throws Exception {
         StringBuffer sBuffer = new StringBuffer();

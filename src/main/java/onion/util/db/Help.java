@@ -4,10 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * 工具类
@@ -176,145 +174,6 @@ public class Help {
 
         }
         return list;
-    }
-
-    /**
-     * 生成分页的sql语句，需配置db数据库类型
-     *
-     * @param key       数据库字段
-     * @param value     对应的值
-     * @param tableName 表名
-     * @param order     排序（sqlserver必须）
-     * @param page      第几页
-     * @param size      显示多少条
-     * @return sql分页的sql语句，size当前条件下的总记录数
-     * @throws Exception
-     */
-    public static Map<String, Object> SqlSting(String[] key, String[] value,
-                                               String tableName, String order, int page, int size)
-            throws Exception {
-        if (key != null && key.length != value.length)
-            throw new Exception("参数值不对应");
-        Map<String, Object> sqlMap = new HashMap<String, Object>();
-        String db = PropertyReader.get("db");
-        String sqlString = "", sizeString = "";
-        List<Object> obj = new ArrayList<Object>();
-        if (db.equalsIgnoreCase("oracle")) {
-            sqlString = "select*from ( select t.*,size_rownum from "
-                    + tableName + " t ";
-            sizeString = "select COUNT(*) as size from " + tableName + " ";
-            if (key != null && key.length > 0 && value.equals(null)) {
-
-                for (int i = 0; i < value.length; i++) {
-                    try {
-                        if (value[i].trim().equals("")
-                                || value[i].trim().equals(null))
-                            continue;
-                    } catch (Exception e) {
-                        continue;
-                    }
-                    if (i == 0) {
-                        sqlString = sqlString + " where ";
-                        sizeString = sizeString + " where ";
-                    }
-                    String val = value[i];
-                    String keyString = key[i];
-                    if (i < value.length - 1) {
-                        sqlString = sqlString + keyString + " like '%" + val
-                                + "%' and ";
-                        sizeString = sizeString + keyString + " like '%" + val
-                                + "%' and ";
-
-                    } else {
-                        sqlString = sqlString + keyString + " like '%" + val
-                                + "%' ";
-                        sizeString = sizeString + keyString + " like '%" + val
-                                + "%' ";
-                    }
-                }
-            }
-            if (!order.trim().equals("") && !order.equals(null)) {
-                sqlString = sqlString + " order by " + order;
-            }
-            sqlString = sqlString + " ) where size_rownum>(" + (page - 1)
-                    * size + " and size_rownum<=(" + page + ")*" + size;
-        } else if (db.equalsIgnoreCase("mysql")) {
-            sqlString = "select*from " + tableName + "  ";
-            sizeString = "select COUNT(*) as size from " + tableName + " ";
-            if (key != null && key.length > 0) {
-                for (int i = 0; i < value.length; i++) {
-                    try {
-                        if (value[i] == null || value[i].trim().equals(""))
-                            continue;
-                    } catch (Exception e) {
-                        continue;
-                    }
-                    if (i == 0) {
-                        sqlString = sqlString + " where ";
-                        sizeString = sizeString + " where ";
-                    }
-                    String val = value[i];
-                    String keyString = key[i];
-                    if (i < value.length - 1) {
-                        sqlString = sqlString + keyString + " like ? and ";
-                        sizeString = sizeString + keyString + " like ? and ";
-                        obj.add("%" + val + "%");
-                    } else {
-                        sqlString = sqlString + keyString + " like ? ";
-                        sizeString = sizeString + keyString + " like ? ";
-                        obj.add("%" + val + "%");
-                    }
-                }
-            }
-            if (!order.trim().equals("") && !order.equals(null)) {
-                sqlString = sqlString + " order by " + order;
-            }
-            sqlString = sqlString + " limit " + (page - 1) * size + "," + size;
-        } else if (db.equalsIgnoreCase("sqlserver")) {
-            sqlString = "SELECT TOP " + size
-                    + "*FROM ( SELECT ROW_NUMBER() OVER ( ORDER BY " + order
-                    + " ) COLINDEX ,* FROM " + tableName + " ";
-            if (order.trim().equals("") && order.equals(null))
-                throw new Exception("sqlserver分页语句必须设置排序");
-            sqlString = sqlString + " ) v WHERE   COLINDEX >"
-                    + (page - 1) * size + " ";
-            sizeString = "select COUNT(*) as size from " + tableName + " ";
-            int j = 0;
-            if (key != null && key.length > 0) {
-                for (int i = 0; i < value.length; i++) {
-                    try {
-                        if (value[i] == null || value[i].trim().equals(""))
-                            continue;
-                    } catch (Exception e) {
-                        continue;
-                    }
-                    if (j == 0) {
-                        sqlString = sqlString + " and ";
-                        sizeString = sizeString + " where ";
-                    }
-                    String val = value[i];
-                    String keyString = key[i];
-                    obj.add(val);
-                    sqlString = sqlString + keyString + " like '%'+?+'%' and ";
-                    sizeString = sizeString + keyString + " like '%'+?+'%' and ";
-                    j++;
-                }
-                if (sqlString.contains("and")) {
-                    sqlString = sqlString.substring(0, sqlString.lastIndexOf("and"));
-                    sizeString = sizeString.substring(0, sizeString.lastIndexOf("and"));
-                }
-            }
-            sqlString = sqlString + " order by " + order;
-        }
-        sqlMap.put("sql", sqlString);
-        sqlMap.put("size", sizeString);
-        sqlMap.put("value", obj);
-        return sqlMap;
-    }
-
-    public static String toEnd(String msg) {
-        msg = msg.trim();
-        return msg.substring(0, msg.length() - 1);
     }
 
     public static String toField(String field) {
