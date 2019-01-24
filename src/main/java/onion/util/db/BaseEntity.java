@@ -1,10 +1,9 @@
 package onion.util.db;
 
 import onion.util.db.ibatis.SqlGenerate;
-
 import java.util.List;
 
-public abstract class BaseEntity {
+public class BaseEntity {
 
     public int save() throws Exception {
         return SqlGenerate.createEntity(this);
