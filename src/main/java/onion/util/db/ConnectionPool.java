@@ -1,15 +1,18 @@
 package onion.util.db;
 
+import javax.sql.DataSource;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ConnectionPool {
+public class ConnectionPool implements DataSource {
     private static String DRIVER;
     private static String URL;
     private static String USER;
@@ -105,6 +108,11 @@ public class ConnectionPool {
         return con;
     }
 
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+        return null;
+    }
+
     public synchronized void stop() throws Exception {
         Iterator var2 = this.cons.iterator();
         while (var2.hasNext()) {
@@ -115,6 +123,41 @@ public class ConnectionPool {
             }
         }
         this.cons.clear();
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public PrintWriter getLogWriter() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void setLogWriter(PrintWriter out) throws SQLException {
+
+    }
+
+    @Override
+    public void setLoginTimeout(int seconds) throws SQLException {
+
+    }
+
+    @Override
+    public int getLoginTimeout() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return null;
     }
 
     private class PoolConHandler implements InvocationHandler {

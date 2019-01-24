@@ -15,11 +15,20 @@ public class DButilsDataSource {
     private static String PASSWORD;
     private static int type = 1;
 
-    private static HikariDataSource datasource;
+    private static DataSource datasource;
 
-    public synchronized static HikariDataSource getDatasource() {
+    public synchronized static DataSource getDatasource() {
         if (datasource == null) {
-            initHikariCP();
+            Object o = null;
+            try {
+                o = Class.forName("com.zaxxer.hikari.HikariConfig");
+            } catch (ClassNotFoundException e) {
+            }
+            if (o == null) {
+                datasource = ConnectionPool.getInstanse();
+            } else {
+                initHikariCP();
+            }
         }
         return datasource;
     }
@@ -30,40 +39,40 @@ public class DButilsDataSource {
 
     private synchronized static void initHikariCP() {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDataSourceProperties( new Properties() );
-        hikariConfig.setHealthCheckProperties( new Properties() );
-        hikariConfig.setMinimumIdle( 1 );
-        hikariConfig.setMaximumPoolSize( 5 );
-        hikariConfig.setConnectionTimeout( 300L );
-        hikariConfig.setValidationTimeout( 300L );
-        hikariConfig.setInitializationFailTimeout( 1L );
-        if (type == 1 ) {
-            if (PropertyReader.get( "key" ) == null) {
-                DRIVER = PropertyReader.get( "driver" ).toString();
-                URL = PropertyReader.get( "url" ).toString();
-                USER = PropertyReader.get( "user" ).toString();
-                PASSWORD = PropertyReader.get( "password" ).toString();
+        hikariConfig.setDataSourceProperties(new Properties());
+        hikariConfig.setHealthCheckProperties(new Properties());
+        hikariConfig.setMinimumIdle(1);
+        hikariConfig.setMaximumPoolSize(5);
+        hikariConfig.setConnectionTimeout(300L);
+        hikariConfig.setValidationTimeout(300L);
+        hikariConfig.setInitializationFailTimeout(1L);
+        if (type == 1) {
+            if (PropertyReader.get("key") == null) {
+                DRIVER = PropertyReader.get("driver").toString();
+                URL = PropertyReader.get("url").toString();
+                USER = PropertyReader.get("user").toString();
+                PASSWORD = PropertyReader.get("password").toString();
             } else {
-                DRIVER = PropertyReader.get( "driver" ).toString();
-                URL = DESUtils.getDecryptString( PropertyReader.get( "url" ).toString() );
-                USER = DESUtils.getDecryptString( PropertyReader.get( "user" ).toString() );
-                PASSWORD = DESUtils.getDecryptString( PropertyReader.get( "password" ).toString() );
+                DRIVER = PropertyReader.get("driver").toString();
+                URL = DESUtils.getDecryptString(PropertyReader.get("url").toString());
+                USER = DESUtils.getDecryptString(PropertyReader.get("user").toString());
+                PASSWORD = DESUtils.getDecryptString(PropertyReader.get("password").toString());
             }
         }
 
-        Logger.log( 0, "DRIVER:" + DRIVER );
-        Logger.log( 0, "URL:" + URL );
-        Logger.log( 0, "USER:" + USER );
-        Logger.log( 0, "PASSWORD:" + PASSWORD );
-        Logger.log( 0, "DBTYPE:" + PropertyReader.get( "db" ) );
-        Logger.log( 0, "start hikaricp ..." );
-        hikariConfig.setJdbcUrl( URL );
-        hikariConfig.setDriverClassName( DRIVER );
-        hikariConfig.setUsername( USER );
-        hikariConfig.setPassword( PASSWORD );
-        hikariConfig.setMinimumIdle( Integer.valueOf( PropertyReader.get( "minPoolSize" ) ).intValue() );
-        hikariConfig.setMaximumPoolSize( Integer.valueOf( PropertyReader.get( "maxPoolSize" ) ).intValue() );
-        datasource = new HikariDataSource( hikariConfig );
+        Logger.log(0, "DRIVER:" + DRIVER);
+        Logger.log(0, "URL:" + URL);
+        Logger.log(0, "USER:" + USER);
+        Logger.log(0, "PASSWORD:" + PASSWORD);
+        Logger.log(0, "DBTYPE:" + PropertyReader.get("db"));
+        Logger.log(0, "start hikaricp ...");
+        hikariConfig.setJdbcUrl(URL);
+        hikariConfig.setDriverClassName(DRIVER);
+        hikariConfig.setUsername(USER);
+        hikariConfig.setPassword(PASSWORD);
+        hikariConfig.setMinimumIdle(Integer.valueOf(PropertyReader.get("minPoolSize")).intValue());
+        hikariConfig.setMaximumPoolSize(Integer.valueOf(PropertyReader.get("maxPoolSize")).intValue());
+        datasource = new HikariDataSource(hikariConfig);
     }
 }
 

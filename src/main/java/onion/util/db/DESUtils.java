@@ -57,15 +57,6 @@ public class DESUtils {
         }
     }
 
-    public static void main(String[] args){
-        String url="jdbc:sqlserver://192.168.100.198:50636;Databasename=YXHIS;";
-        String name="sa";
-        String sa="123qwe,.";
-        System.out.println("url:"+getEncryptString(url));
-        System.out.println("name:"+getEncryptString(name));
-        System.out.println("sa:"+getEncryptString(sa));
-    }
-
 }
 
 
